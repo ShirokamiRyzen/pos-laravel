@@ -87,8 +87,8 @@
             <div class="form-group">
                 <label for="status">Status</label>
                 <select name="status" class="form-control @error('status') is-invalid @enderror" id="status">
-                    <option value="1" {{ old('status') === 1 ? 'selected' : ''}}>Aktif</option>
-                    <option value="0" {{ old('status') === 0 ? 'selected' : ''}}>Tidak Aktif</option>
+                    <option value="1" {{ old('status') === 1 ? 'selected' : ''}}>Tersedia</option>
+                    <option value="0" {{ old('status') === 0 ? 'selected' : ''}}>Tidak Tersedia</option>
                 </select>
                 @error('status')
                 <span class="invalid-feedback" role="alert">

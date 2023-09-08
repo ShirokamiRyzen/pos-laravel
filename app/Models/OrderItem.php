@@ -12,8 +12,20 @@ class OrderItem extends Model
         'price',
         'quantity',
         'product_id',
-        'order_id'
+        'order_id',
     ];
+
+    
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
+    
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function product()
     {
@@ -28,4 +40,9 @@ class OrderItem extends Model
     {
         return $this->total();
 	}
+
+    public function scopeByMonthYear($query, $year, $month) {
+        return $query->whereYear('created_at', $year)
+                     ->whereMonth('created_at', $month);
+    }
 }

@@ -8,6 +8,8 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\OrderStoreRequest;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\OrdersExport;
 
 class OrderController extends Controller
 {
@@ -34,6 +36,7 @@ class OrderController extends Controller
 
         return view('orders.index', compact('orders', 'total', 'receivedAmount'));
     }
+    
 
     public function purchase(Request $request)
     {
@@ -89,54 +92,69 @@ class OrderController extends Controller
             }
 
             $order->payments()->create([
-                'amount' => $sum,
+                'amount' => str_replace('.', '',$sum),
                 'supplier_id' => $request->supplier_id ?? null,
                 'user_id' => $request->user()->id,
             ]);
 
-            return 'success';
+            return $order->id;
         }
 
         $cart = $request->cart;
 
         foreach ($cart as $item) {
+
+            $product = Product::find($item["id"]);
+            if ($product->quantity == $item["pivot"]["quantity"]) {
+                $product->status = 2;
+            }
+            $product->quantity = $product->quantity - $item["pivot"]["quantity"];
+            $product->save();
             $order->items()->create([
                 'price' => $item["price"] * $item["pivot"]["quantity"],
                 'quantity' => $item["pivot"]["quantity"],
                 'product_id' => $item["id"],
             ]);
-
-            $product = Product::find($item["id"]);
-            $product->quantity = $product->quantity - $item["pivot"]["quantity"];
-            $product->save();
         }
 
         if ($request->due_date == null) {
             $order->payments()->create([
-                'amount' => $request->amount,
+                'amount' => str_replace('.', '',$request->amount),
                 'user_id' => $request->user()->id,
             ]);
         }
-        return 'success';
+        return $order->id;
     }
     public function show($orders)
     {
+        //$orders = Order::all();
         $orders = OrderItem::where('order_id', $orders)->with('product')->get();
 
+        //$total = $orders->sum('total()');
         $total = $orders->map(function ($i) {
             return $i->product->price * $i->quantity;
         })->sum();
 
         return view('orders.show', compact('orders', 'total'));
+        //dd($orders);
+        //return view('orders.show')->with('order', $order);
+        //return($order);
+        //return DB::table('order')->join('order_items', 'order_items.order_id', '=', 'orders.id')->where('orders.id', "$order")->get();
     }
 
     public function show_purchase($orders)
     {
+        //$orders = Order::all();
         $orders = OrderItem::where('order_id', $orders)->get();
+        //$total = $orders->sum('total()');
         $total = $orders->map(function ($i) {
             return $i->product->purchase_price * $i->quantity;
         })->sum();
         return view('orders_purchase.show', compact('orders', 'total'));
+        //dd($orders);
+        //return view('orders.show')->with('order', $order);
+        //return($order);
+        //return DB::table('order')->join('order_items', 'order_items.order_id', '=', 'orders.id')->where('orders.id', "$order")->get();
     }
 
     public function TransactionDelete($id)
@@ -149,5 +167,21 @@ class OrderController extends Controller
             return Redirect()->route('orders.index')->with('error', 'Oops, ada sesuatu yang Salah!');
         }
 
+    }
+
+    public function export()
+    {
+        return Excel::download(new OrdersExport, 'Riwayat Pemesanan.xlsx');
+    }
+        
+    public function printStruk($orders) {
+        $orderX = Order::find($orders);
+        $orders = OrderItem::where('order_id', $orders)->with('product')->get();
+
+        //$total = $orders->sum('total()');
+        $total = $orders->map(function ($i) {
+            return $i->product->price * $i->quantity;
+        })->sum();
+        return view('cart.invoice', compact('orders','orderX', 'total'));
     }
 }

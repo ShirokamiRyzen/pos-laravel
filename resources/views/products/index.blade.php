@@ -65,7 +65,7 @@
                     }}</td>
                     <td>
                         <span
-                            class="right badge badge-{{ $product->status ? 'success' : 'danger' }}">{{$product->status ? 'Aktif' : 'Tidak Aktif'}}</span>
+                            class="right badge badge-{{ ($product->status==1) ? 'success' : 'danger' }}">{{($product->status==1) ? 'Tersedia' : 'Tidak Tersedia'}}</span>
                     </td>
                     <td class="d-flex" style="gap: 5px">
                         @if (Auth::user()->role == 1 )

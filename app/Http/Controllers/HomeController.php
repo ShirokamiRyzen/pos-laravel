@@ -10,6 +10,8 @@ use App\Models\Product;
 use App\Models\Customer;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Session;
+use LaravelDaily\LaravelCharts\Classes\LaravelChart;
+
 
 class HomeController extends Controller
 {
@@ -30,6 +32,20 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+
+        $totalReceivedAmount = Order::all()->sum(function ($order) {
+            return $order->receivedAmount();
+        });
+
+        $chart_options = [
+            'chart_title' => 'Users by months',
+            'report_type' => 'group_by_date',
+            'model' => 'App\Models\User',
+            'group_by_field' => 'created_at',
+            'group_by_period' => 'month',
+            'chart_type' => 'bar',
+        ];
+
         $products_count = Product::count();
         $orders = Order::with(['items', 'payments'])->get();
         //$customers_count = Customer::count();
@@ -55,6 +71,7 @@ class HomeController extends Controller
             }
         }
         return view('home', [
+            'receivedAmount' => $totalReceivedAmount,
             'orders_count' => $orders->count(),
             'income' => $orders->map(function($i) {
                 if($i->receivedAmount() > $i->total()) {
@@ -72,6 +89,7 @@ class HomeController extends Controller
             })->count(),
             //'customers_count' => $customers_count,
             'products_count' => $products_count,
+            
         ]);
     }
 }

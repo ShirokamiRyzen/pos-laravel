@@ -36,6 +36,8 @@ Route::post('/cart', [CartController::class, 'store'])->name('cart.store')->midd
 Route::post('/cart/change-qty', [CartController::class, 'changeQty'])->middleware('checkUserRole:1,2');
 Route::delete('/cart/delete', [CartController::class, 'delete'])->middleware('checkUserRole:1,2');
 Route::delete('/cart/empty', [CartController::class, 'empty'])->middleware('checkUserRole:1,2');
+Route::get('/invoice/{no_order}', [CartController::class, 'invoice'])->name('invoice');
+// Route::get('/struk/{no_order}', [CartController::class, 'struk'])->name('struk');
 
 //Order History Routes
 Route::resource('orders', OrderController::class)->middleware('checkUserRole:1,2');
@@ -59,3 +61,10 @@ Route::post('/settings', [SettingController::class, 'store'])->name('settings.st
 Route::resource('products', ProductController::class)->middleware('checkUserRole:1,2');
 Route::post('/update-purchase-price', [ProductController::class, 'updatePurchasePrice'])->name('products.updatePurchasePrice')->middleware('checkUserRole:1');
 Route::get('/delete_products/{id}', [ProductController::class,'ProductsDelete'])->middleware('checkUserRole:1');
+
+//Export Routes
+Route::get('/orders/export', 'OrderController@exportToExcel')->name('orders.export');
+Route::get('export', [OrderController::class, 'export'])->name('orders.export');
+
+//Struk Route
+Route::get('/struk/{orders}', [OrderController::class, 'printStruk'])->name('struk');

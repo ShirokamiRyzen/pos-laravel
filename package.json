@@ -28,6 +28,8 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "admin-lte": "^3.2.0"
+        "admin-lte": "^3.2.0",
+        "chart.js": "^4.4.0",
+        "react-router-dom": "^6.15.0"
     }
 }

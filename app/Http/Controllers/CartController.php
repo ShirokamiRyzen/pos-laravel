@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -35,6 +36,7 @@ class CartController extends Controller
             }
             // update only quantity
             $cart->pivot->quantity = $cart->pivot->quantity + 1;
+            $cart->pivot->user_id= Auth::user()->id;
             $cart->pivot->save();
         } else {
             if ($product->quantity < 1) {
@@ -90,4 +92,6 @@ class CartController extends Controller
 
         return response('', 204);
     }
+
+  
 }

@@ -9,6 +9,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use DB;
+use \Illuminate\Support\Facades\Facade;
 
 class ProductController extends Controller
 {
@@ -135,13 +136,13 @@ class ProductController extends Controller
     
         $delete = DB::table('products')->where('id', $id)->delete();
         if ($delete)
-                            {
-                                return Redirect()->route('products.index')->with('success','Produk berhasil dihapus!');                  
-                            }
+            {
+                return Redirect()->route('products.index')->with('success','Produk berhasil dihapus!');                  
+            }
              else
-                  {
-                    return Redirect()->route('products.index')->with('error','Ada sesuatu yang salah!');  
-                  }
+            {
+                return Redirect()->route('products.index')->with('error','Ada sesuatu yang salah!');  
+            }
 
       }
 }

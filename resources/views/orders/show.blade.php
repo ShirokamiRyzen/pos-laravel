@@ -11,7 +11,7 @@
 			<thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nama Barang</th>
+                    <th>Nama Produk</th>
                     <th>Jumlah</th>
                     <th>UoM</th>
                     <th>Harga</th>

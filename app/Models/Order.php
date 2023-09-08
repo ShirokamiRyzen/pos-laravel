@@ -67,6 +67,6 @@ class Order extends Model
 
     public function formattedReceivedAmount()
     {
-        return number_format($this->receivedAmount(), 2);
+        return number_format(str_replace('.', '',$this->receivedAmount()), 2);
     }
 }
