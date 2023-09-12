@@ -162,7 +162,7 @@ class OrderController extends Controller
 
         $delete = DB::table('orders')->where('id', $id)->delete();
         if ($delete) {
-            return Redirect()->route('orders.index')->with('success', 'User Berhasil Dihapus!');
+            return Redirect()->route('orders.index')->with('success', 'Data Berhasil Dihapus!');
         } else {
             return Redirect()->route('orders.index')->with('error', 'Oops, ada sesuatu yang Salah!');
         }
